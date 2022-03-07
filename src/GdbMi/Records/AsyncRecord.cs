@@ -8,7 +8,7 @@
     // status-async-output contains on-going status information about the progress of a slow operation. It can be discarded. All status output is prefixed by ‘+’.
     // notify-async-output contains supplementary information that the client should handle(e.g., a new breakpoint information). All notify output is prefixed by ‘=’.
     // https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax
-    public class AsyncRecord : TupleValue, IOutOfBandRecord
+    public class AsyncRecord : Record
     {
         public const char ExecPrefix = '*';
 

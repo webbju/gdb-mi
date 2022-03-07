@@ -4,7 +4,7 @@ namespace GdbMi.Records
     using System.Collections.Generic;
     using GdbMi.Values;
 
-    public class ResultRecord : TupleValue, IRecord
+    public class ResultRecord : Record
     {
         public const char ResultPrefix = '^';
 

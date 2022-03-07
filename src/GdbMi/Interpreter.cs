@@ -8,7 +8,7 @@
 
     public static class Interpreter
     {
-        public static IRecord ParseOutputLine(string line)
+        public static Record ParseOutputLine(string line)
         {
             if (string.IsNullOrEmpty(line))
             {
