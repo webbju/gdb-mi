@@ -2,7 +2,7 @@ namespace GdbMi.Records
 {
     using System;
 
-    public class StreamRecord : IOutOfBandRecord
+    public class StreamRecord : Record
     {
         public const char ConsolePrefix = '~';
 

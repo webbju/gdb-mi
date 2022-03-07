@@ -13,6 +13,13 @@
 
         private readonly IReadOnlyList<string> order;
 
+        protected TupleValue()
+        {
+            values = new ReadOnlyDictionary<string, Value>(new Dictionary<string, Value>());
+
+            order = Array.Empty<string>().ToList();
+        }
+
         public TupleValue(IEnumerable<Value> values)
         {
             if (values is null)
