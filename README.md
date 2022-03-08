@@ -1,6 +1,6 @@
 # gdb-mi
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+![example workflow](https://github.com/webbju/gdb-mi/actions/workflows/main.yaml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
 
 ### Synopsis
 
