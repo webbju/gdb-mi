@@ -13,7 +13,7 @@
         {
             var record = Interpreter.ParseOutput("^done,bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x08048564\",func=\"main\",file=\"myprog.c\",fullname=\"/home/myprog.c\",line=\"68\",thread-groups=[\"i1\"],times=\"0\"}");
             Assert.IsInstanceOfType(record, typeof(ResultRecord));
-            Assert.AreEqual(0u, (record as ResultRecord).Token);
+            Assert.AreEqual(0, (record as ResultRecord).Token);
             Assert.AreEqual("done", (record as ResultRecord).Class);
 
             var breakpoint = new Breakpoint(record["bkpt"]);
@@ -51,7 +51,7 @@
         {
             var record = Interpreter.ParseOutput("*stopped,reason=\"breakpoint - hit\",disp=\"keep\",bkptno=\"1\",thread-id=\"0\",frame={addr=\"0x08048564\",func=\"main\",args=[{name=\"argc\",value=\"1\"},{name=\"argv\",value=\"0xbfc4d4d4\"}],file=\"myprog.c\",fullname=\"/home/myprog.c\",line=\"68\",arch=\"i386: x86_64\"}");
             Assert.IsInstanceOfType(record, typeof(AsyncRecord));
-            Assert.AreEqual(0u, (record as AsyncRecord).Token);
+            Assert.AreEqual(0, (record as AsyncRecord).Token);
             Assert.AreEqual(AsyncRecord.AsyncType.Exec, (record as AsyncRecord).Type);
             Assert.AreEqual("stopped", (record as AsyncRecord).Class);
 
@@ -69,7 +69,7 @@
         {
             var record = Interpreter.ParseOutput("^done,threads=[{id=\"2\",target-id=\"Thread 0xb7e14b90 (LWP 21257)\",frame={level=\"0\",addr=\"0xffffe410\",func=\"__kernel_vsyscall\",args=[]},state=\"running\"},{id=\"1\",target-id=\"Thread 0xb7e156b0 (LWP 21254)\",frame={level=\"0\",addr=\"0x0804891f\",func=\"foo\",args=[{name=\"i\",value=\"10\"}],file=\"/tmp/a.c\",fullname=\"/tmp/a.c\",line=\"158\",arch=\"i386:x86_64\"},state=\"running\"}],current-thread-id=\"1\"");
             Assert.IsInstanceOfType(record, typeof(ResultRecord));
-            Assert.AreEqual(0u, (record as ResultRecord).Token);
+            Assert.AreEqual(0, (record as ResultRecord).Token);
             Assert.AreEqual("done", (record as ResultRecord).Class);
             Assert.AreEqual(2, (record as ResultRecord)["threads"].Count);
             Assert.AreEqual(new ConstValue("1"), (record as ResultRecord)["current-thread-id"]);

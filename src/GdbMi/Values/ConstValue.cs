@@ -48,6 +48,12 @@ namespace GdbMi.Values
         }
 
         /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Value);
+        }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"\"{Value}\"";

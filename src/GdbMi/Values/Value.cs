@@ -20,7 +20,7 @@
         /// </summary>
         public virtual int Count
         {
-            get => throw new NotImplementedException();
+            get => 0;
         }
 
         /// <summary>
@@ -29,7 +29,7 @@
         /// <param name="key">The key of the element to get.</param>
         public virtual Value this[string key]
         {
-            get => throw new NotImplementedException();
+            get => default;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@
         /// <param name="index">The zero-based index of the element to get.</param>
         public virtual Value this[int index]
         {
-            get => throw new NotImplementedException();
+            get => default;
         }
 
         /// <summary>
@@ -64,7 +64,9 @@
         /// <returns>true if the <c>Value</c> contains an element with the specified key; otherwise, false.</returns>
         public virtual bool TryGetValue(string key, [MaybeNullWhen(false)] out Value value)
         {
-            throw new NotImplementedException();
+            value = default;
+
+            return false;
         }
     }
 }

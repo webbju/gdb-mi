@@ -83,6 +83,14 @@ dotnet_diagnostic.SA1401.severity = suggestion
 dotnet_diagnostic.SA1400.severity = warning
 dotnet_diagnostic.SA0001.severity = silent
 dotnet_diagnostic.SA1101.severity = silent
+csharp_space_around_binary_operators = before_and_after
+csharp_style_throw_expression = true:suggestion
+csharp_style_prefer_null_check_over_type_check = true:suggestion
+dotnet_diagnostic.SA1108.severity = silent
+dotnet_diagnostic.IDE0041.severity = suggestion
+dotnet_diagnostic.IDE0082.severity = suggestion
+dotnet_diagnostic.IDE0083.severity = suggestion
+dotnet_diagnostic.IDE0018.severity = warning
 
 [*.{cs,vb}]
 #### Naming styles ####
@@ -150,3 +158,5 @@ tab_width = 4
 indent_size = 4
 end_of_line = crlf
 dotnet_style_namespace_match_folder = true:suggestion
+dotnet_style_allow_statement_immediately_after_block_experimental = true:silent
+dotnet_style_require_accessibility_modifiers = always:suggestion

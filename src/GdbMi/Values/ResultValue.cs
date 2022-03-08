@@ -110,6 +110,12 @@
         }
 
         /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Variable, Value);
+        }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"{Variable}={Value}";

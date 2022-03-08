@@ -68,9 +68,9 @@ namespace GdbMi.Tests
 
             foreach (var @class in classes)
             {
-                var record = Interpreter.ParseOutput($"{uint.MaxValue}^{@class}");
+                var record = Interpreter.ParseOutput($"{int.MaxValue}^{@class}");
                 Assert.IsInstanceOfType(record, typeof(ResultRecord));
-                Assert.AreEqual(uint.MaxValue, (record as ResultRecord).Token);
+                Assert.AreEqual(int.MaxValue, (record as ResultRecord).Token);
                 Assert.AreEqual(@class, (record as ResultRecord).Class);
             }
         }
@@ -80,7 +80,7 @@ namespace GdbMi.Tests
         {
             var record = Interpreter.ParseOutput("^done,value=\"0xefffeb7c\"");
             Assert.IsInstanceOfType(record, typeof(ResultRecord));
-            Assert.AreEqual(0u, (record as ResultRecord).Token);
+            Assert.AreEqual(0, (record as ResultRecord).Token);
             Assert.AreEqual("done", (record as ResultRecord).Class);
 
             var resultValue = (record as ResultRecord)["value"];
@@ -94,7 +94,7 @@ namespace GdbMi.Tests
         {
             var record = Interpreter.ParseOutput("^done,features=[\"async\",\"breakpoint-notifications\"]");
             Assert.IsInstanceOfType(record, typeof(ResultRecord));
-            Assert.AreEqual(0u, (record as ResultRecord).Token);
+            Assert.AreEqual(0, (record as ResultRecord).Token);
             Assert.AreEqual("done", (record as ResultRecord).Class);
 
             var features = (record as ResultRecord)["features"];
@@ -109,7 +109,7 @@ namespace GdbMi.Tests
         {
             var record = Interpreter.ParseOutput("^done,numchild=\"1\",children=[child={name=\"name\",exp=\"exp\",numchild=\"0\",value=\"value\",type=\"type\"}]");
             Assert.IsInstanceOfType(record, typeof(ResultRecord));
-            Assert.AreEqual(0u, (record as ResultRecord).Token);
+            Assert.AreEqual(0, (record as ResultRecord).Token);
             Assert.AreEqual("done", (record as ResultRecord).Class);
             Assert.IsInstanceOfType((record as ResultRecord)["numchild"], typeof(ConstValue));
             Assert.IsInstanceOfType((record as ResultRecord)["children"], typeof(ListValue));
@@ -120,7 +120,7 @@ namespace GdbMi.Tests
         {
             var record = Interpreter.ParseOutput("^done,groups=[{id=\"17\",type=\"process\",pid=\"yyy\",num_children=\"2\"}]");
             Assert.IsInstanceOfType(record, typeof(ResultRecord));
-            Assert.AreEqual(0u, (record as ResultRecord).Token);
+            Assert.AreEqual(0, (record as ResultRecord).Token);
             Assert.AreEqual("done", (record as ResultRecord).Class);
 
             var groups = (record as ResultRecord)["groups"];
@@ -155,7 +155,7 @@ namespace GdbMi.Tests
 
             var record = Interpreter.ParseOutput("*stopped,reason=\"signal - received\",signal-name=\"SIGSEGV\",signal-meaning=\"Segmentation fault\",reason=\"signal - received\",signal-name=\"SIGSEGV\",signal-meaning=\"Segmentation fault\",reason=\"exited - signalled\",signal-name=\"SIGSEGV\",signal-meaning=\"Segmentation fault\"");
             Assert.IsInstanceOfType(record, typeof(AsyncRecord));
-            Assert.AreEqual(0u, (record as AsyncRecord).Token);
+            Assert.AreEqual(0, (record as AsyncRecord).Token);
             Assert.AreEqual("stopped", (record as AsyncRecord).Class);
 
             Assert.AreEqual(new ConstValue("exited - signalled"), (record as AsyncRecord)["reason"]);

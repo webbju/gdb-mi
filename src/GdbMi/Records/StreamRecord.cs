@@ -36,6 +36,7 @@ namespace GdbMi.Records
         /// <param name="content">Contents of the output stream.</param>
         /// <exception cref="ArgumentException"><paramref name="content"/> must not be null or empty.</exception>
         internal StreamRecord(StreamType type, string content)
+            : base()
         {
             if (string.IsNullOrEmpty(content))
             {
