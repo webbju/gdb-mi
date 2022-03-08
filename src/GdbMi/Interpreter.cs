@@ -6,11 +6,24 @@
     using GdbMi.Records;
     using GdbMi.Values;
 
+    /// <summary>
+    /// <c>Interpreter</c> for the GDB Machine Interface (GDB/MI).
+    /// </summary>
+    /// <remarks>
+    /// <para>GDB/MI is a line based machine oriented text interface to GDB and is activated by specifying using the <c>--interpreter</c> command line option (<see href="https://sourceware.org/gdb/onlinedocs/gdb/Mode-Options.html#Mode-Options"/>).</para>
+    /// <para>It is specifically intended to support the development of systems which use the debugger as just one small component of a larger system.</para>
+    /// <para>GDB/MI documentation: <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html#GDB_002fMI"/>.</para>
+    /// </remarks>
     public static class Interpreter
     {
-        public static Record ParseOutputLine(string line)
+        /// <summary>
+        /// Parses and interprets GDB/MI output into a <seealso cref="Record"/>.
+        /// </summary>
+        /// <param name="line">Single line of GDB/MI output.</param>
+        /// <returns>If successful, a <seealso cref="Record"/> result intepreted from <paramref name="line"/> contents, otherwise null.</returns>
+        public static Record ParseOutput(string line)
         {
-            if (string.IsNullOrEmpty(line))
+            if (string.IsNullOrWhiteSpace(line))
             {
                 return null;
             }
@@ -34,10 +47,6 @@
                     return new StreamRecord(StreamRecord.StreamType.Log, line.Substring(1).Trim(new char[] { '\"' }));
             }
 
-            //
-            // The following record types have associated key-pair data; identify the type and build a result collection.
-            //
-
             string recordData = line;
 
             int bufferStartPos = 0;
@@ -46,7 +55,7 @@
 
             char type = '?';
 
-            uint token = 0;
+            uint token = default;
 
             while (bufferCurrentPos < line.Length)
             {
@@ -65,19 +74,14 @@
 
                     results = FilterDuplicateKeys(results);
 
-                    switch (type)
+                    return type switch
                     {
-                        case ResultRecord.ResultPrefix:
-                            return new ResultRecord(token, @class, results);
-                        case AsyncRecord.ExecPrefix:
-                            return new AsyncRecord(AsyncRecord.AsyncType.Exec, token, @class, results);
-                        case AsyncRecord.StatusPrefix:
-                            return new AsyncRecord(AsyncRecord.AsyncType.Status, token, @class, results);
-                        case AsyncRecord.NotifyPrefix:
-                            return new AsyncRecord(AsyncRecord.AsyncType.Notify, token, @class, results);
-                        default:
-                            throw new NotImplementedException($"unhandled record type: {type}");
-                    }
+                        ResultRecord.ResultPrefix => new ResultRecord(token, @class, results),
+                        AsyncRecord.ExecPrefix => new AsyncRecord(AsyncRecord.AsyncType.Exec, token, @class, results),
+                        AsyncRecord.StatusPrefix => new AsyncRecord(AsyncRecord.AsyncType.Status, token, @class, results),
+                        AsyncRecord.NotifyPrefix => new AsyncRecord(AsyncRecord.AsyncType.Notify, token, @class, results),
+                        _ => throw new NotImplementedException($"unhandled record type: {type}"),
+                    };
                 }
                 else if ((recordData[bufferCurrentPos] == ResultRecord.ResultPrefix)
                     || (recordData[bufferCurrentPos] == AsyncRecord.ExecPrefix)
@@ -88,7 +92,10 @@
 
                     string stringToken = recordData.Substring(bufferStartPos, bufferCurrentPos);
 
-                    uint.TryParse(stringToken, out token);
+                    if (!uint.TryParse(stringToken, out token))
+                    {
+                        token = default;
+                    }
 
                     bufferStartPos = ++bufferCurrentPos;
                 }
@@ -101,22 +108,17 @@
 
         private static IList<Value> FilterDuplicateKeys(IList<Value> list)
         {
-            var distinct = new Dictionary<string, ResultValue>();
+            var distinctResults = new Dictionary<string, ResultValue>();
 
             foreach (Value value in list)
             {
                 if (value is ResultValue result)
                 {
-                    distinct[result.Variable] = result;
+                    distinctResults[result.Variable] = result;
                 }
             }
 
-            if (distinct.Any())
-            {
-                return distinct.Values.ToList<Value>();
-            }
-
-            return list;
+            return distinctResults.Any() ? distinctResults.Values.ToList<Value>() : list;
         }
 
         private static IList<Value> ParseBuffer(string buffer)
@@ -166,12 +168,9 @@
                     insideQuotationEnclosure = !insideQuotationEnclosure;
                 }
 
+                // Handle a nested enclosure, const-variable, or the end of a string.
                 if (((bufferCurrentPos + 1) >= buffer.Length) || ((buffer[bufferCurrentPos + 1] == ',') && (enclosureCount == 0)))
                 {
-                    //
-                    // Handle a nested enclosure, const-variable, or the end of a string.
-                    //
-
                     string enclosedSegment = buffer.Substring(bufferStartPos, (bufferCurrentPos + 1) - bufferStartPos);
 
                     if (enclosedSegment.StartsWith("["))

@@ -5,6 +5,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/webbju/gdb-mi</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
