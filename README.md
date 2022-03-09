@@ -1,6 +1,15 @@
 # gdb-mi
 
-![example workflow](https://github.com/webbju/gdb-mi/actions/workflows/main.yaml/badge.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.md)
+[![NuGet][nuget-shield]][nuget-link]
+[![Build Status][build-shield]][build-link]
+[![License][license-shield]][license-link]
+
+[nuget-shield]: https://img.shields.io/nuget/v/GdbMi.svg
+[nuget-link]: https://www.nuget.org/packages/GdbMi
+[build-shield]: https://github.com/webbju/gdb-mi/actions/workflows/main.yaml/badge.svg
+[build-link]: https://github.com/webbju/gdb-mi/actions/workflows/main.yaml
+[license-shield]: https://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-link]: https://github.com/webbju/gdb-mi/blob/master/LICENSE
 
 ### Synopsis
 
