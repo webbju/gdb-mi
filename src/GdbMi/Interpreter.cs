@@ -30,7 +30,7 @@
 
             switch (line)
             {
-                case var _ when line.StartsWith(PromptRecord.Prompt):
+                case var _ when line.StartsWith(PromptRecord.Prompt, StringComparison.Ordinal):
                     // GDB prompt. Waiting for input.
                     return new PromptRecord();
 
@@ -55,7 +55,7 @@
 
             char type = '?';
 
-            uint token = default;
+            int token = default;
 
             while (bufferCurrentPos < line.Length)
             {
@@ -92,7 +92,7 @@
 
                     string stringToken = recordData.Substring(bufferStartPos, bufferCurrentPos);
 
-                    if (!uint.TryParse(stringToken, out token))
+                    if (!int.TryParse(stringToken, out token))
                     {
                         token = default;
                     }
@@ -173,7 +173,7 @@
                 {
                     string enclosedSegment = buffer.Substring(bufferStartPos, (bufferCurrentPos + 1) - bufferStartPos);
 
-                    if (enclosedSegment.StartsWith("["))
+                    if (enclosedSegment.StartsWith("[", StringComparison.Ordinal))
                     {
                         string listValue = enclosedSegment.Trim(new char[] { '[', ']' }); // remove [] container
 
@@ -181,7 +181,7 @@
 
                         results.Add(new ResultValue(enclosureVariable, new ListValue(nestedResults)));
                     }
-                    else if (enclosedSegment.StartsWith("{"))
+                    else if (enclosedSegment.StartsWith("{", StringComparison.Ordinal))
                     {
                         string tupleValueStr = enclosedSegment.Trim(new char[] { '{', '}' }); // remove {} container
 

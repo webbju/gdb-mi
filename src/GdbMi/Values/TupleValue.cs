@@ -59,13 +59,21 @@
         /// <param name="tuple"><c>TupleValue</c> to clone.</param>
         protected TupleValue(TupleValue tuple)
         {
+            if (tuple is null)
+            {
+                throw new ArgumentNullException(nameof(tuple));
+            }
+
             order = tuple.order;
 
             values = tuple.values;
         }
 
         /// <inheritdoc/>
-        public override int Count => order.Count;
+        public override int Count
+        {
+            get => order.Count;
+        }
 
         /// <inheritdoc/>
         public override Value this[string key]
@@ -131,6 +139,12 @@
         }
 
         /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(values, order);
+        }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             var builder = new StringBuilder();
@@ -144,7 +158,7 @@
                     builder.Append(',');
                 }
 
-                builder.AppendFormat("{0}={1}", order[i], this[order[i]]);
+                builder.Append($"{order[i]}={this[order[i]]}");
             }
 
             builder.Append('}');

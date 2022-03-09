@@ -22,7 +22,7 @@ namespace GdbMi.Records
         /// <param name="class">Record class.</param>
         /// <param name="values">Values used to initialise underlying <seealso cref="TupleValue"/> collection.</param>
         /// <exception cref="ArgumentException"><paramref name="class"/> must not be null or empty.</exception>
-        public ResultRecord(uint token, string @class, IList<Value> values)
+        public ResultRecord(int token, string @class, IList<Value> values)
             : base(values)
         {
             if (string.IsNullOrWhiteSpace(@class))
@@ -47,7 +47,7 @@ namespace GdbMi.Records
         /// Gets the result record token.
         /// </summary>
         /// <remarks>The token is any sequence of digits specified by the user when issuing the command.</remarks>
-        public uint Token { get; init; }
+        public int Token { get; init; }
 
         /// <summary>
         /// Gets the result record class.

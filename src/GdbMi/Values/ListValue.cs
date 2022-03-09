@@ -69,6 +69,12 @@
         }
 
         /// <inheritdoc/>
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(values);
+        }
+
+        /// <inheritdoc/>
         public override string ToString()
         {
             return $"[{string.Join(",", values.Select(r => $"{r}"))}]";

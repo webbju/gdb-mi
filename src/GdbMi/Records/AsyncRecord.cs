@@ -33,7 +33,7 @@
         /// <param name="class">Record class.</param>
         /// <param name="values">Values used to initialise underlying <seealso cref="TupleValue"/> collection.</param>
         /// <exception cref="ArgumentException"><paramref name="class"/> must not be null or empty.</exception>
-        public AsyncRecord(AsyncType type, uint token, string @class, IList<Value> values)
+        public AsyncRecord(AsyncType type, int token, string @class, IList<Value> values)
             : base(values)
         {
             if (string.IsNullOrEmpty(@class))
@@ -85,7 +85,7 @@
         /// <summary>
         /// Gets the async record token.
         /// </summary>
-        public uint Token { get; init; }
+        public int Token { get; init; }
 
         /// <summary>
         /// Gets the async record class.
