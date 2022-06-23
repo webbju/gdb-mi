@@ -30,16 +30,14 @@
                 throw new ArgumentNullException(nameof(values));
             }
 
-            var results = values.Where(x => x is ResultValue).Select(x => x as ResultValue);
-
-            if (values.Count != results.Count())
+            if (!values.All(x => x is ResultValue))
             {
                 throw new ArgumentException($"'{nameof(values)}' contains non {typeof(ResultValue)} entries.");
             }
 
-            this.order = results.Select(x => x.Variable).ToList();
+            this.order = values.Select(x => (x as ResultValue).Variable).ToList();
 
-            this.values = new ReadOnlyDictionary<string, ResultValue>(results.ToDictionary(x => x.Variable, x => x));
+            this.values = new ReadOnlyDictionary<string, ResultValue>(values.ToDictionary(x => (x as ResultValue).Variable, x => x as ResultValue));
         }
 
         /// <summary>
@@ -151,7 +149,7 @@
 
             builder.Append('{');
 
-            for (int i = 0; i < order.Count; i++)
+            foreach (int i in Enumerable.Range(0, order.Count))
             {
                 if (i > 0)
                 {

@@ -149,7 +149,7 @@ namespace GdbMi.Tests
         [TestMethod]
         public void ParseAsyncRecordWithDuplicateResults()
         {
-            // Not sure if this is a bug but it's possible for GDB to output multiple duplicate fields in async records.
+            // Not sure if this is a bug, but it's possible for GDB to output multiple duplicate fields in async records.
             // Docs seem to indicate that this isn't typical behaviour though for migitation we'll select the "right most" (latest) keys if this occurs.
             // https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Async-Records.html#GDB_002fMI-Async-Records
 
