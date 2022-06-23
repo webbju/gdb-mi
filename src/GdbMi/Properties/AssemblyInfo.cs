@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // In SDK-style projects such as this one, several assembly attributes that were historically
@@ -13,3 +14,6 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM.
 [assembly: Guid("8edf3d26-e824-4f75-9fe1-a212bd752ba4")]
+
+// Allow unit tests visibility to internal class behaviours.
+[assembly: InternalsVisibleTo("GdbMi.Tests")]
