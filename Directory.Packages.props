@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup Label="Test dependencies">
-    <MSTestVersion>3.6.3</MSTestVersion>
+    <MSTestVersion>3.6.4</MSTestVersion>
     <MicrosoftNETTestSdkVersion>17.12.0</MicrosoftNETTestSdkVersion>
   </PropertyGroup>
 </Project>
