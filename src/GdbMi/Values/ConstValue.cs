@@ -15,6 +15,8 @@ public class ConstValue : Value, IEquatable<ConstValue>
     public ConstValue(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
+
+        Value = value;
     }
 
     /// <summary>

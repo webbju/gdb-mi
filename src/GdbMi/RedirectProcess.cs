@@ -56,9 +56,11 @@ public abstract class RedirectProcess : IDisposable
 
     public static ProcessStartInfo CreateDefaultStartInfo(string filename, string arguments, string workingDirectory = null)
     {
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(filename);
+
         var startInfo = new ProcessStartInfo
         {
-            FileName = filename ?? throw new ArgumentNullException(nameof(filename)),
+            FileName = filename,
 
             Arguments = arguments,
 
@@ -124,18 +126,17 @@ public abstract class RedirectProcess : IDisposable
 
     public async Task SendCommandAsync(string command, CancellationToken cancellationToken)
     {
-        Log.Debug($"[{nameof(RedirectProcess)}] SendCommand: {command}");
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(command);
 
-        if (string.IsNullOrWhiteSpace(command))
-        {
-            throw new ArgumentNullException(nameof(command));
-        }
+        Log.Debug($"[{nameof(RedirectProcess)}] SendCommand: {command}");
 
         await standardInputWriter.WriteLineAsync(command.AsMemory(), cancellationToken).ConfigureAwait(false);
     }
 
     protected virtual void ProcessStdout(object sender, DataReceivedEventArgs args)
     {
+        ArgumentNullException.ThrowIfNull(args);
+
         lastOutputTimestamp = Environment.TickCount;
 
         Log.Debug($"[{nameof(RedirectProcess)}] ProcessStdout: {args.Data}");
@@ -143,6 +144,8 @@ public abstract class RedirectProcess : IDisposable
 
     protected virtual void ProcessStderr(object sender, DataReceivedEventArgs args)
     {
+        ArgumentNullException.ThrowIfNull(args);
+
         lastOutputTimestamp = Environment.TickCount;
 
         Log.Debug($"[{nameof(RedirectProcess)}] ProcessStderr: {args.Data}");
@@ -150,6 +153,8 @@ public abstract class RedirectProcess : IDisposable
 
     protected virtual void ProcessExited(object sender, EventArgs args)
     {
+        ArgumentNullException.ThrowIfNull(args);
+
         if (sender is Process p)
         {
             Log.Debug($"[{nameof(RedirectProcess)}] {p.StartInfo.FileName} exited ({p.ExitCode}) in {Environment.TickCount - startTimestamp} ms");
