@@ -1,26 +1,23 @@
-﻿namespace GdbMi
+﻿using System;
+namespace GdbMi;
+
+using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+
+public class CommandData<TResult>
 {
-    using System;
-    using System.Runtime.CompilerServices;
-    using System.Threading;
-    using System.Threading.Tasks;
+    public int Token { get; init; }
 
-    public class CommandData<TResult>
-    {
-        public int Token { get; init; }
+    public string Command { get; init; }
 
-        public string Command { get; init; }
+    public CancellationToken CancellationToken { get; init; }
 
-        public CancellationToken CancellationToken { get; init; }
+    internal TaskCompletionSource<TResult> CompletionSource { get; init; }
 
-        public Task<TResult> CompletionTask => CompletionSource.Task;
+    internal Action<TResult> ResultDelegate { get; init; }
 
-        internal TaskCompletionSource<TResult> CompletionSource { get; init; }
+    public TaskAwaiter<TResult> GetAwaiter() => CompletionSource.Task.GetAwaiter();
 
-        internal Action<TResult> ResultDelegate { get; init; }
-
-        public TaskAwaiter<TResult> GetAwaiter() => CompletionTask.GetAwaiter();
-
-        public ConfiguredTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext) => CompletionTask.ConfigureAwait(continueOnCapturedContext);
-    }
+    public ConfiguredTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext) => CompletionSource.Task.ConfigureAwait(continueOnCapturedContext);
 }
