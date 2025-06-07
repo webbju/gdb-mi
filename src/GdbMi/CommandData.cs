@@ -1,6 +1,6 @@
-﻿using System;
-namespace GdbMi;
+﻿namespace GdbMi;
 
+using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;

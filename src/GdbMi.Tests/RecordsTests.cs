@@ -64,7 +64,7 @@ public class RecordsTests
     [TestMethod]
     public void ParseResultRecordToken()
     {
-        string[] classes = { "done", "running", "connected", "error", "exit" };
+        string[] classes = ["done", "running", "connected", "error", "exit"];
 
         foreach (var @class in classes)
         {

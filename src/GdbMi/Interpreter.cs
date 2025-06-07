@@ -36,15 +36,15 @@ public static class Interpreter
 
             case var _ when line[0] == StreamRecord.ConsolePrefix:
                 // Console stream record.
-                return new StreamRecord(StreamRecord.StreamType.Console, line.Substring(1).Trim(new char[] { '\"' }));
+                return new StreamRecord(StreamRecord.StreamType.Console, line[1..].Trim(['\"']));
 
             case var _ when line[0] == StreamRecord.TargetPrefix:
                 // Target stream record.
-                return new StreamRecord(StreamRecord.StreamType.Target, line.Substring(1).Trim(new char[] { '\"' }));
+                return new StreamRecord(StreamRecord.StreamType.Target, line[1..].Trim(['\"']));
 
             case var _ when line[0] == StreamRecord.LogPrefix:
                 // Log stream record.
-                return new StreamRecord(StreamRecord.StreamType.Log, line.Substring(1).Trim(new char[] { '\"' }));
+                return new StreamRecord(StreamRecord.StreamType.Log, line[1..].Trim(['\"']));
         }
 
         string recordData = line;
@@ -61,13 +61,13 @@ public static class Interpreter
         {
             if (((bufferCurrentPos + 1) >= line.Length) || (line[bufferCurrentPos + 1] == ','))
             {
-                string @class = recordData.Substring(bufferStartPos, (bufferCurrentPos + 1) - bufferStartPos);
+                string @class = recordData[bufferStartPos..(bufferCurrentPos + 1)];
 
                 string data = string.Empty;
 
                 if (((bufferCurrentPos + 1) < line.Length) && (line[bufferCurrentPos + 1] == ','))
                 {
-                    data = recordData.Substring(bufferCurrentPos + 2);
+                    data = recordData[(bufferCurrentPos + 2)..];
                 }
 
                 var results = ParseBuffer(data);
@@ -106,7 +106,7 @@ public static class Interpreter
         return null;
     }
 
-    private static IList<Value> FilterDuplicateKeys(IList<Value> list)
+    static private IList<Value> FilterDuplicateKeys(IList<Value> list)
     {
         var distinctResults = new Dictionary<string, ResultValue>();
 
@@ -118,10 +118,10 @@ public static class Interpreter
             }
         }
 
-        return distinctResults.Any() ? distinctResults.Values.ToList<Value>() : list;
+        return distinctResults.Count > 0 ? distinctResults.Values.ToList<Value>() : list;
     }
 
-    private static IList<Value> ParseBuffer(string buffer)
+    static private IList<Value> ParseBuffer(string buffer)
     {
         var results = new List<Value>();
 
@@ -141,7 +141,7 @@ public static class Interpreter
         {
             if ((buffer[bufferCurrentPos] == '=') && (enclosureCount == 0))
             {
-                enclosureVariable = buffer.Substring(bufferStartPos, bufferCurrentPos - bufferStartPos);
+                enclosureVariable = buffer[bufferStartPos..bufferCurrentPos];
 
                 bufferStartPos = ++bufferCurrentPos;
             }
@@ -171,19 +171,19 @@ public static class Interpreter
             // Handle a nested enclosure, const-variable, or the end of a string.
             if (((bufferCurrentPos + 1) >= buffer.Length) || ((buffer[bufferCurrentPos + 1] == ',') && (enclosureCount == 0)))
             {
-                string enclosedSegment = buffer.Substring(bufferStartPos, (bufferCurrentPos + 1) - bufferStartPos);
+                string enclosedSegment = buffer[bufferStartPos..(bufferCurrentPos + 1)];
 
-                if (enclosedSegment.StartsWith("[", StringComparison.Ordinal))
+                if (enclosedSegment.StartsWith('['))
                 {
-                    string listValue = enclosedSegment.Trim(new char[] { '[', ']' }); // remove [] container
+                    string listValue = enclosedSegment.Trim(['[', ']']); // remove [] container
 
                     var nestedResults = ParseBuffer(listValue);
 
                     results.Add(new ResultValue(enclosureVariable, new ListValue(nestedResults)));
                 }
-                else if (enclosedSegment.StartsWith("{", StringComparison.Ordinal))
+                else if (enclosedSegment.StartsWith('{'))
                 {
-                    string tupleValueStr = enclosedSegment.Trim(new char[] { '{', '}' }); // remove {} container
+                    string tupleValueStr = enclosedSegment.Trim(['{', '}']); // remove {} container
 
                     var nestedResults = ParseBuffer(tupleValueStr);
 
@@ -200,7 +200,7 @@ public static class Interpreter
                 }
                 else
                 {
-                    string constValueStr = enclosedSegment.Trim(new char[] { '"' }); // remove quotation-marks container
+                    string constValueStr = enclosedSegment.Trim(['"']); // remove quotation-marks container
 
                     var constValue = new ConstValue(constValueStr);
 

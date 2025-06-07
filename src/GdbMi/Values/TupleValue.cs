@@ -44,7 +44,7 @@ public class TupleValue : Value, IEquatable<TupleValue>
     {
         values = new ReadOnlyDictionary<string, ResultValue>(new Dictionary<string, ResultValue>());
 
-        order = Array.Empty<string>().ToList();
+        order = [];
     }
 
     /// <summary>

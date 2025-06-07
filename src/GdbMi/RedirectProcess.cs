@@ -13,8 +13,6 @@ public abstract class RedirectProcess : IDisposable
 
     private int lastOutputTimestamp;
 
-    private Process process;
-
     private TextWriter standardInputWriter = TextWriter.Null;
 
     public RedirectProcess(ProcessStartInfo startInfo)
@@ -26,14 +24,20 @@ public abstract class RedirectProcess : IDisposable
     {
     }
 
-    public RedirectProcess(Process process)
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    internal RedirectProcess(Process process)
     {
         ArgumentNullException.ThrowIfNull(process);
 
-        this.process = process;
+        Process = process;
     }
 
-    public Process Process => process;
+    /// <summary>
+    /// Gets the underlying <see cref="Process"/> object.
+    /// </summary>
+    public Process Process { get; init; }
 
     public void Dispose()
     {
@@ -46,7 +50,7 @@ public abstract class RedirectProcess : IDisposable
     {
         if (disposing)
         {
-            process.Dispose();
+            Process.Dispose();
 
             standardInputWriter.Dispose();
         }
@@ -82,37 +86,37 @@ public abstract class RedirectProcess : IDisposable
 
     public void Start()
     {
-        if (process.StartInfo.RedirectStandardOutput)
+        if (Process.StartInfo.RedirectStandardOutput)
         {
-            process.OutputDataReceived += ProcessStdout;
+            Process.OutputDataReceived += ProcessStdout;
         }
 
-        if (process.StartInfo.RedirectStandardError)
+        if (Process.StartInfo.RedirectStandardError)
         {
-            process.ErrorDataReceived += ProcessStderr;
+            Process.ErrorDataReceived += ProcessStderr;
         }
 
-        if (process.EnableRaisingEvents)
+        if (Process.EnableRaisingEvents)
         {
-            process.Exited += ProcessExited;
+            Process.Exited += ProcessExited;
         }
 
-        Log.Debug($"[{nameof(RedirectProcess)}] Start: {process.StartInfo.FileName} (Args=\"{process.StartInfo.Arguments}\" Pwd=\"{process.StartInfo.WorkingDirectory}\")");
+        Log.Debug($"[{nameof(RedirectProcess)}] Start: {Process.StartInfo.FileName} (Args=\"{Process.StartInfo.Arguments}\" Pwd=\"{Process.StartInfo.WorkingDirectory}\")");
 
         startTimestamp = Environment.TickCount;
 
         lastOutputTimestamp = startTimestamp;
 
-        if (!process.Start())
+        if (!Process.Start())
         {
-            throw new InvalidOperationException($"Could not start process: {process.StartInfo.FileName}");
+            throw new InvalidOperationException($"Could not start process: {Process.StartInfo.FileName}");
         }
 
-        process.BeginOutputReadLine();
+        Process.BeginOutputReadLine();
 
-        process.BeginErrorReadLine();
+        Process.BeginErrorReadLine();
 
-        standardInputWriter = TextWriter.Synchronized(process.StandardInput);
+        standardInputWriter = TextWriter.Synchronized(Process.StandardInput);
     }
 
     public async Task SendCommandAsync(string command, CancellationToken cancellationToken)
