@@ -24,7 +24,7 @@ public class SessionTests
         Assert.AreEqual(111, command.Token);
         Assert.AreEqual("-break-insert main", command.Command);
         
-        session.ProcessStdout("111^done,bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x08048564\",func=\"main\",file=\"myprog.c\",fullname=\"/home/myprog.c\",line=\"68\",thread-groups=[\"i1\"],times=\"0\"}");
+        session.HandleStdout("111^done,bkpt={number=\"1\",type=\"breakpoint\",disp=\"keep\",enabled=\"y\",addr=\"0x08048564\",func=\"main\",file=\"myprog.c\",fullname=\"/home/myprog.c\",line=\"68\",thread-groups=[\"i1\"],times=\"0\"}");
 
         var offloadTask = Task.Run(async () =>
         {

@@ -15,25 +15,25 @@ public abstract class RedirectProcess : IDisposable
 
     private Process process;
 
-    private ProcessStartInfo startInfo;
-
     private TextWriter standardInputWriter = TextWriter.Null;
 
     public RedirectProcess(ProcessStartInfo startInfo)
+        : this(new Process()
+        {
+            StartInfo = startInfo ?? throw new ArgumentNullException(nameof(startInfo)),
+            EnableRaisingEvents = true,
+        })
     {
-        this.startInfo = startInfo;
     }
 
     public RedirectProcess(Process process)
     {
-        this.process = process;
+        ArgumentNullException.ThrowIfNull(process);
 
-        this.startInfo = process?.StartInfo;
+        this.process = process;
     }
 
     public Process Process => process;
-
-    public ProcessStartInfo StartInfo => startInfo;
 
     public void Dispose()
     {
@@ -46,11 +46,9 @@ public abstract class RedirectProcess : IDisposable
     {
         if (disposing)
         {
-            process?.Dispose();
-            process = null;
+            process.Dispose();
 
-            standardInputWriter?.Dispose();
-            standardInputWriter = null;
+            standardInputWriter.Dispose();
         }
     }
 
@@ -84,13 +82,6 @@ public abstract class RedirectProcess : IDisposable
 
     public void Start()
     {
-        process = new Process
-        {
-            StartInfo = startInfo,
-
-            EnableRaisingEvents = true,
-        };
-
         if (process.StartInfo.RedirectStandardOutput)
         {
             process.OutputDataReceived += ProcessStdout;
@@ -114,7 +105,7 @@ public abstract class RedirectProcess : IDisposable
 
         if (!process.Start())
         {
-            throw new InvalidOperationException($"Could start process: {process.StartInfo.FileName}");
+            throw new InvalidOperationException($"Could not start process: {process.StartInfo.FileName}");
         }
 
         process.BeginOutputReadLine();
@@ -133,16 +124,23 @@ public abstract class RedirectProcess : IDisposable
         await standardInputWriter.WriteLineAsync(command.AsMemory(), cancellationToken).ConfigureAwait(false);
     }
 
-    protected virtual void ProcessStdout(object sender, DataReceivedEventArgs args)
+    private void ProcessStdout(object sender, DataReceivedEventArgs args)
     {
         ArgumentNullException.ThrowIfNull(args);
 
         lastOutputTimestamp = Environment.TickCount;
 
         Log.Debug($"[{nameof(RedirectProcess)}] ProcessStdout: {args.Data}");
+
+        HandleStdout(args.Data);
     }
 
-    protected virtual void ProcessStderr(object sender, DataReceivedEventArgs args)
+    internal virtual void HandleStdout(string stdout)
+    {
+        // Default implementation does nothing
+    }
+
+    private void ProcessStderr(object sender, DataReceivedEventArgs args)
     {
         ArgumentNullException.ThrowIfNull(args);
 
@@ -151,7 +149,12 @@ public abstract class RedirectProcess : IDisposable
         Log.Debug($"[{nameof(RedirectProcess)}] ProcessStderr: {args.Data}");
     }
 
-    protected virtual void ProcessExited(object sender, EventArgs args)
+    internal virtual void HandleStderr(string stderr)
+    {
+        // Default implementation does nothing
+    }
+
+    private void ProcessExited(object sender, EventArgs args)
     {
         ArgumentNullException.ThrowIfNull(args);
 
@@ -159,5 +162,10 @@ public abstract class RedirectProcess : IDisposable
         {
             Log.Debug($"[{nameof(RedirectProcess)}] {p.StartInfo.FileName} exited ({p.ExitCode}) in {Environment.TickCount - startTimestamp} ms");
         }
+    }
+
+    internal virtual void HandleExit(int exitCode)
+    {
+        // Default implementation does nothing
     }
 }

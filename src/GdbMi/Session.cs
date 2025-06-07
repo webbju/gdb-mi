@@ -22,7 +22,10 @@ public class Session : RedirectProcess
     {
     }
 
-    public Session(Process process)
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    internal Session(Process process)
         : base(process)
     {
     }
@@ -72,7 +75,13 @@ public class Session : RedirectProcess
         return commandData;
     }
 
-    internal void ProcessStdout(string stdout)
+    private void ProcessStdout(object sender, DataReceivedEventArgs args)
+    {
+        HandleStdout(args.Data);
+    }
+
+    /// <inheritdoc/>
+    internal override void HandleStdout(string stdout)
     {
         if (string.IsNullOrWhiteSpace(stdout))
         {
@@ -83,13 +92,13 @@ public class Session : RedirectProcess
 
         switch (record)
         {
-            case var _ when record is PromptRecord:
+            case PromptRecord:
                 break;
-            case var _ when record is AsyncRecord:
+            case AsyncRecord:
                 break;
-            case var _ when record is StreamRecord:
+            case StreamRecord:
                 break;
-            case var _ when record is ResultRecord:
+            case ResultRecord:
                 break;
         }
 
@@ -110,17 +119,5 @@ public class Session : RedirectProcess
         }
 
         //responseBuffer.Enqueue(stdout);
-    }
-
-    internal void ProcessStderr(string stderr)
-    {
-        if (string.IsNullOrWhiteSpace(stderr))
-        {
-            return;
-        }
-    }
-
-    internal void ProcessExited()
-    {
     }
 }
