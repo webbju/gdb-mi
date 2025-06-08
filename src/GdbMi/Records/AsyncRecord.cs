@@ -7,7 +7,9 @@ using GdbMi.Values;
 /// <summary>
 /// <c>AsyncRecord</c> represents async output GDB/MI responses.
 /// </summary>
-/// <remarks><see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>.</remarks>
+/// <remarks>
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>
+/// </remarks>
 public class AsyncRecord : Record
 {
     /// <summary>

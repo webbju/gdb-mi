@@ -12,7 +12,7 @@ using GdbMi.Values;
 /// <remarks>
 /// <para>GDB/MI is a line based machine oriented text interface to GDB and is activated by specifying using the <c>--interpreter</c> command line option (<see href="https://sourceware.org/gdb/onlinedocs/gdb/Mode-Options.html#Mode-Options"/>).</para>
 /// <para>It is specifically intended to support the development of systems which use the debugger as just one small component of a larger system.</para>
-/// <para>GDB/MI documentation: <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html#GDB_002fMI"/>.</para>
+/// <para>GDB/MI documentation: <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI.html#GDB_002fMI"/></para>
 /// </remarks>
 public static class Interpreter
 {

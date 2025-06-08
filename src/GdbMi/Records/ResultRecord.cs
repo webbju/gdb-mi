@@ -7,7 +7,9 @@ using GdbMi.Values;
 /// <summary>
 /// <c>ResultRecord</c> represents result GDB/MI responses.
 /// </summary>
-/// <remarks><see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Result-Records.html#GDB_002fMI-Result-Records"/>.</remarks>
+/// <remarks>
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Result-Records.html#GDB_002fMI-Result-Records"/>
+/// </remarks>
 public class ResultRecord : Record
 {
     /// <summary>

@@ -8,7 +8,9 @@ using System.Linq;
 /// <summary>
 /// <c>ListValue</c> is an indexed collection of <c>Value</c> or <c>ResultValue</c> objects.
 /// </summary>
-/// <remarks><see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>.</remarks>
+/// <remarks>
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>
+/// </remarks>
 public class ListValue : Value, IEquatable<ListValue>
 {
     /// <remarks>Despite naming. ReadOnlyCollection implements IReadOnlyList.</remarks>

@@ -10,7 +10,9 @@ using System.Text;
 /// <summary>
 /// <c>TupleValue</c> is a keyed collection of <c>ResultValue</c> objects.
 /// </summary>
-/// <remarks><see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>.</remarks>
+/// <remarks>
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>
+/// </remarks>
 public class TupleValue : Value, IEquatable<TupleValue>
 {
     private readonly ReadOnlyDictionary<string, ResultValue> values;

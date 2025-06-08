@@ -7,7 +7,7 @@ using GdbMi.Values;
 /// <c>Breakpoint</c> manages reported information about a breakpoint, a tracepoint, a watchpoint, or a catchpoint.
 /// </summary>
 /// <remarks>
-/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Breakpoint-Information.html#GDB_002fMI-Breakpoint-Information"></see>.
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Breakpoint-Information.html#GDB_002fMI-Breakpoint-Information"/>
 /// </remarks>
 public class Breakpoint : TupleValue
 {

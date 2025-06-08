@@ -7,17 +7,44 @@ using System.Threading.Tasks;
 
 public class CommandData<TResult>
 {
+    /// <summary>
+    /// Gets or sets the token associated with the command.
+    /// </summary>
+    /// <remarks>
+    /// The token, when present, is passed back when the command finishes to denote which command the result belongs to.
+    /// </remarks>
     public int Token { get; init; }
 
+    /// <summary>
+    /// Gets or sets the GDB/MI command.
+    /// </summary>
     public string Command { get; init; }
 
+    /// <summary>
+    /// Gets or sets the cancellation token for the command.
+    /// </summary>
     public CancellationToken CancellationToken { get; init; }
 
-    internal TaskCompletionSource<TResult> CompletionSource { get; init; }
+    public TaskCompletionSource<TResult> CompletionSource { get; init; }
 
-    internal Action<TResult> ResultDelegate { get; init; }
+    /// <summary>
+    /// Gets or sets the delegate to be invoked when the command completes.
+    /// </summary>
+    public Action<TResult> ResultDelegate { get; init; }
 
-    public TaskAwaiter<TResult> GetAwaiter() => CompletionSource.Task.GetAwaiter();
+    /// <summary>
+    /// Gets an awaiter used to await completion of the command.
+    /// </summary>
+    public TaskAwaiter<TResult> GetAwaiter()
+    {
+        return CompletionSource.Task.GetAwaiter();
+    }
 
-    public ConfiguredTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext) => CompletionSource.Task.ConfigureAwait(continueOnCapturedContext);
+    /// <summary>
+    /// Configures an awaiter used to await completion of the command.
+    /// </summary>
+    public ConfiguredTaskAwaitable<TResult> ConfigureAwait(bool continueOnCapturedContext)
+    {
+        return CompletionSource.Task.ConfigureAwait(continueOnCapturedContext);
+    }
 }

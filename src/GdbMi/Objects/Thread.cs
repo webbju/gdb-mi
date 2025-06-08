@@ -8,7 +8,7 @@ using GdbMi.Values;
 /// </summary>
 /// <remarks>
 /// It uses it uses a tuple with the following fields:
-/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Thread-Information.html#GDB_002fMI-Thread-Information"/>.
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Thread-Information.html#GDB_002fMI-Thread-Information"/>
 /// </remarks>
 public class Thread : TupleValue
 {

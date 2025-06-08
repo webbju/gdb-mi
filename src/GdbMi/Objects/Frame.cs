@@ -6,7 +6,9 @@ using GdbMi.Values;
 /// <summary>
 /// <c>Frame</c> manages reported information about a stack frame.
 /// </summary>
-/// <remarks><see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Frame-Information.html#GDB_002fMI-Frame-Information"/>.</remarks>
+/// <remarks>
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Frame-Information.html#GDB_002fMI-Frame-Information"/>
+/// </remarks>
 public class Frame : TupleValue
 {
     /// <summary>

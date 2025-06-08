@@ -10,7 +10,7 @@ using System;
 ///     GDB internally maintains a number of output streams: the console, the target, and the log.
 ///     The output intended for each of these streams is funneled through the GDB/MI interface using stream records.
 /// </para>
-/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Stream-Records.html#GDB_002fMI-Stream-Records"/>.
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Stream-Records.html#GDB_002fMI-Stream-Records"/>
 /// </remarks>
 public class StreamRecord : Record
 {

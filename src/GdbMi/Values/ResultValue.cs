@@ -6,7 +6,9 @@ using System.Diagnostics.CodeAnalysis;
 /// <summary>
 /// <c>ResultValue</c> represents a named <c>Value</c>.
 /// </summary>
-/// <remarks><see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>.</remarks>
+/// <remarks>
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>
+/// </remarks>
 public class ResultValue : Value, IEquatable<ResultValue>
 {
     /// <summary>

@@ -15,7 +15,10 @@ public abstract class RedirectProcess : IDisposable
 
     private TextWriter standardInputWriter = TextWriter.Null;
 
-    public RedirectProcess(ProcessStartInfo startInfo)
+    /// <summary>
+    /// Constructor which initializes a new instance of <see cref="RedirectProcess"/> with the specified <see cref="ProcessStartInfo"/>.
+    /// </summary>
+    protected RedirectProcess(ProcessStartInfo startInfo)
         : this(new Process()
         {
             StartInfo = startInfo ?? throw new ArgumentNullException(nameof(startInfo)),

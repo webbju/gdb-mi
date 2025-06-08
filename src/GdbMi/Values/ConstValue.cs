@@ -5,7 +5,9 @@ using System;
 /// <summary>
 /// <c>ConstValue</c> is represents a single (constant) <c>c-string</c> value.
 /// </summary>
-/// <remarks><see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>.</remarks>
+/// <remarks>
+/// <see href="https://sourceware.org/gdb/onlinedocs/gdb/GDB_002fMI-Output-Syntax.html#GDB_002fMI-Output-Syntax"/>
+/// </remarks>
 public class ConstValue : Value, IEquatable<ConstValue>
 {
     /// <summary>

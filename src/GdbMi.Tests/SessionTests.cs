@@ -20,7 +20,6 @@ public class SessionTests
         var session = new Session(mockProcess.Object);
 
         var command = await session.SendCommandAsync("111-break-insert main", r => waitHandle.Set());
-        Assert.IsNotNull(command.CompletionSource.Task);
         Assert.AreEqual(111, command.Token);
         Assert.AreEqual("-break-insert main", command.Command);
         
