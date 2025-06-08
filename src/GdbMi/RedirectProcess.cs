@@ -1,159 +1,178 @@
-﻿namespace GdbMi
+﻿namespace GdbMi;
+
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using Serilog;
+
+public abstract class RedirectProcess : IDisposable
 {
-    using System;
-    using System.Diagnostics;
-    using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Serilog;
+    private int startTimestamp;
 
-    public abstract class RedirectProcess : IDisposable
+    private int lastOutputTimestamp;
+
+    private TextWriter standardInputWriter = TextWriter.Null;
+
+    /// <summary>
+    /// Constructor which initializes a new instance of <see cref="RedirectProcess"/> with the specified <see cref="ProcessStartInfo"/>.
+    /// </summary>
+    protected RedirectProcess(ProcessStartInfo startInfo)
+        : this(new Process()
+        {
+            StartInfo = startInfo ?? throw new ArgumentNullException(nameof(startInfo)),
+            EnableRaisingEvents = true,
+        })
     {
-        private int startTimestamp;
+    }
 
-        private int lastOutputTimestamp;
+    /// <summary>
+    /// Default constructor.
+    /// </summary>
+    internal RedirectProcess(Process process)
+    {
+        ArgumentNullException.ThrowIfNull(process);
 
-        private Process process;
+        Process = process;
+    }
 
-        private ProcessStartInfo startInfo;
+    /// <summary>
+    /// Gets the underlying <see cref="Process"/> object.
+    /// </summary>
+    public Process Process { get; init; }
 
-        private TextWriter standardInputWriter = TextWriter.Null;
+    public void Dispose()
+    {
+        Dispose(true);
 
-        public RedirectProcess(ProcessStartInfo startInfo)
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposing)
         {
-            this.startInfo = startInfo;
+            Process.Dispose();
+
+            standardInputWriter.Dispose();
+        }
+    }
+
+    public static ProcessStartInfo CreateDefaultStartInfo(string filename, string arguments, string workingDirectory = null)
+    {
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(filename);
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = filename,
+
+            Arguments = arguments,
+
+            WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(filename),
+
+            CreateNoWindow = true,
+
+            UseShellExecute = false,
+
+            ErrorDialog = false,
+
+            RedirectStandardOutput = true,
+
+            RedirectStandardError = true,
+
+            RedirectStandardInput = true,
+        };
+
+        return startInfo;
+    }
+
+    public void Start()
+    {
+        if (Process.StartInfo.RedirectStandardOutput)
+        {
+            Process.OutputDataReceived += ProcessStdout;
         }
 
-        public RedirectProcess(Process process)
+        if (Process.StartInfo.RedirectStandardError)
         {
-            this.process = process;
-
-            this.startInfo = process?.StartInfo;
+            Process.ErrorDataReceived += ProcessStderr;
         }
 
-        public Process Process => process;
-
-        public ProcessStartInfo StartInfo => startInfo;
-
-        public void Dispose()
+        if (Process.EnableRaisingEvents)
         {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
+            Process.Exited += ProcessExited;
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                process?.Dispose();
-                process = null;
+        Log.Debug($"[{nameof(RedirectProcess)}] Start: {Process.StartInfo.FileName} (Args=\"{Process.StartInfo.Arguments}\" Pwd=\"{Process.StartInfo.WorkingDirectory}\")");
 
-                standardInputWriter?.Dispose();
-                standardInputWriter = null;
-            }
+        startTimestamp = Environment.TickCount;
+
+        lastOutputTimestamp = startTimestamp;
+
+        if (!Process.Start())
+        {
+            throw new InvalidOperationException($"Could not start process: {Process.StartInfo.FileName}");
         }
 
-        public static ProcessStartInfo CreateDefaultStartInfo(string filename, string arguments, string workingDirectory = null)
+        Process.BeginOutputReadLine();
+
+        Process.BeginErrorReadLine();
+
+        standardInputWriter = TextWriter.Synchronized(Process.StandardInput);
+    }
+
+    public async Task SendCommandAsync(string command, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(command);
+
+        Log.Debug($"[{nameof(RedirectProcess)}] SendCommand: {command}");
+
+        await standardInputWriter.WriteLineAsync(command.AsMemory(), cancellationToken).ConfigureAwait(false);
+    }
+
+    private void ProcessStdout(object sender, DataReceivedEventArgs args)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+
+        lastOutputTimestamp = Environment.TickCount;
+
+        Log.Debug($"[{nameof(RedirectProcess)}] ProcessStdout: {args.Data}");
+
+        HandleStdout(args.Data);
+    }
+
+    internal virtual void HandleStdout(string stdout)
+    {
+        // Default implementation does nothing
+    }
+
+    private void ProcessStderr(object sender, DataReceivedEventArgs args)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+
+        lastOutputTimestamp = Environment.TickCount;
+
+        Log.Debug($"[{nameof(RedirectProcess)}] ProcessStderr: {args.Data}");
+    }
+
+    internal virtual void HandleStderr(string stderr)
+    {
+        // Default implementation does nothing
+    }
+
+    private void ProcessExited(object sender, EventArgs args)
+    {
+        ArgumentNullException.ThrowIfNull(args);
+
+        if (sender is Process p)
         {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = filename ?? throw new ArgumentNullException(nameof(filename)),
-
-                Arguments = arguments,
-
-                WorkingDirectory = workingDirectory ?? Path.GetDirectoryName(filename),
-
-                CreateNoWindow = true,
-
-                UseShellExecute = false,
-
-                ErrorDialog = false,
-
-                RedirectStandardOutput = true,
-
-                RedirectStandardError = true,
-
-                RedirectStandardInput = true,
-            };
-
-            return startInfo;
+            Log.Debug($"[{nameof(RedirectProcess)}] {p.StartInfo.FileName} exited ({p.ExitCode}) in {Environment.TickCount - startTimestamp} ms");
         }
+    }
 
-        public void Start()
-        {
-            process = new Process
-            {
-                StartInfo = startInfo,
-
-                EnableRaisingEvents = true,
-            };
-
-            if (process.StartInfo.RedirectStandardOutput)
-            {
-                process.OutputDataReceived += ProcessStdout;
-            }
-
-            if (process.StartInfo.RedirectStandardError)
-            {
-                process.ErrorDataReceived += ProcessStderr;
-            }
-
-            if (process.EnableRaisingEvents)
-            {
-                process.Exited += ProcessExited;
-            }
-
-            Log.Debug($"[{nameof(RedirectProcess)}] Start: {process.StartInfo.FileName} (Args=\"{process.StartInfo.Arguments}\" Pwd=\"{process.StartInfo.WorkingDirectory}\")");
-
-            startTimestamp = Environment.TickCount;
-
-            lastOutputTimestamp = startTimestamp;
-
-            if (!process.Start())
-            {
-                throw new InvalidOperationException($"Could start process: {process.StartInfo.FileName}");
-            }
-
-            process.BeginOutputReadLine();
-
-            process.BeginErrorReadLine();
-
-            standardInputWriter = TextWriter.Synchronized(process.StandardInput);
-        }
-
-        public async Task SendCommandAsync(string command, CancellationToken cancellationToken)
-        {
-            Log.Debug($"[{nameof(RedirectProcess)}] SendCommand: {command}");
-
-            if (string.IsNullOrWhiteSpace(command))
-            {
-                throw new ArgumentNullException(nameof(command));
-            }
-
-            await standardInputWriter.WriteLineAsync(command.AsMemory(), cancellationToken).ConfigureAwait(false);
-        }
-
-        protected virtual void ProcessStdout(object sender, DataReceivedEventArgs args)
-        {
-            lastOutputTimestamp = Environment.TickCount;
-
-            Log.Debug($"[{nameof(RedirectProcess)}] ProcessStdout: {args.Data}");
-        }
-
-        protected virtual void ProcessStderr(object sender, DataReceivedEventArgs args)
-        {
-            lastOutputTimestamp = Environment.TickCount;
-
-            Log.Debug($"[{nameof(RedirectProcess)}] ProcessStderr: {args.Data}");
-        }
-
-        protected virtual void ProcessExited(object sender, EventArgs args)
-        {
-            if (sender is Process p)
-            {
-                Log.Debug($"[{nameof(RedirectProcess)}] {p.StartInfo.FileName} exited ({p.ExitCode}) in {Environment.TickCount - startTimestamp} ms");
-            }
-        }
+    internal virtual void HandleExit(int exitCode)
+    {
+        // Default implementation does nothing
     }
 }
